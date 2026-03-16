@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./styles/styles.css">
+    <title>BIAR Invest</title>
+    
+</head>
+<body>
+    <div id="particles-container"></div>
+    <div id="particles-container"></div>
+    <canvas id="canvas"></canvas>
+
+    <div class="container">
+
+        <div class="video-background">
+    <div class="overlay"></div>
+    <video autoplay muted loop playsinline id="bg-video">
+        <source src="./images/7385122-uhd_3840_2160_30fps.mp4" type="video/mp4">
+    </video>
+</div>
+       <div class="menu">
+        <div class="logo">
+           <a href="">
+             <h1>BIAR</h1>
+            <p>Invest</p></a>
+        </div>
+        <div class="infos">
+            <ul class="lista">
+                <li><a href="" data-i18n="menu_about">Sobre</a></li>
+<li><a href="" data-i18n="menu_sust">Sustentabilidade</a></li>
+<li><a href="" data-i18n="menu_invest">Investidores</a></li>
+<li><a href="" data-i18n="menu_contact">Contato</a></li>
+                <li class="linguas">PT
+                    <div class="language">
+        <p onclick="changeLanguage('pt')">Portuguese</p>
+        <p onclick="changeLanguage('en')">English</p>
+        <p onclick="changeLanguage('es')">Spanish</p>
+                </div>
+                </li>
+            </ul>
+        </div>
+       </div>
+
+       <div class="left">
+       <div class="texts">
+         <h1 class="title text-blur" data-i18n="title" >Biar Invest</h1>
+         <p class="subtitle text-blur" data-i18n="subtitle">O seu dinheiro fluirá como um rio</p>
+        <p class="info text-left" data-i18n="main_text"></p>
+       </div>
+       </div>
+
+    <div class="right">
+      <div class="cripto-card aparecer">
+        <canvas id="dot-canvas"></canvas>
+        <h2>BITCOIN</h2>
+        <span id="btc-price">Carregando...</span>
+        <p id="current-date">Carregando data...</p>
+</div>
+</div>
+    </div>
+
+<script src="script.js"></script>
+
+<script>
+  const translations = {
+    'pt': {
+        'menu_about': 'Sobre',
+        'menu_sust': 'Sustentabilidade',
+        'menu_invest': 'Investidores',
+        'menu_contact': 'Contato',
+        'title': 'Biar Invest',
+        'subtitle': 'O seu dinheiro fluirá como um rio',
+        'main_text': 'A Biar Investments foca no crescimento sustentável e na gestão inteligente de ativos digitais para garantir o seu futuro financeiro.',
+        'card_title': 'BITCOIN',
+        'currency': 'brl', // API prefere minúsculo
+        'locale': 'pt-BR'
+    },
+    'en': {
+        'menu_about': 'About',
+        'menu_sust': 'Sustainability',
+        'menu_invest': 'Investors',
+        'menu_contact': 'Contact',
+        'title': 'Biar Invest',
+        'subtitle': 'Your money will flow like a river',
+        'main_text': 'Biar Investments focuses on sustainable growth and intelligent digital asset management to secure your financial future.',
+        'card_title': 'BITCOIN',
+        'currency': 'usd',
+        'locale': 'en-US'
+    },
+    'es': {
+        'menu_about': 'Sobre',
+        'menu_sust': 'Sostenibilidad',
+        'menu_invest': 'Inversores',
+        'menu_contact': 'Contacto',
+        'title': 'Biar Invest',
+        'subtitle': 'Tu dinero fluirá como un río',
+        'main_text': 'Biar Investments se centra en el crecimiento sostenible y la gestión inteligente de activos digitales para asegurar su futuro financiero.',
+        'card_title': 'BITCOIN',
+        'currency': 'eur',
+        'locale': 'es-ES'
+    }
+};
+
+function changeLanguage(lang) {
+    // 1. Tradução dos textos (seu código atual)
+    const elements = document.querySelectorAll('[data-i18n]');
+    elements.forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[lang][key]) {
+            el.innerText = translations[lang][key];
+        }
+    });
+
+    // 2. Atualiza o rótulo do menu (seu código atual)
+    const displayNames = { 'pt': 'PT', 'en': 'EN', 'es': 'ES' };
+    const linguasLi = document.querySelector('.linguas');
+    linguasLi.childNodes[0].textContent = displayNames[lang] + " ";
+
+    // 3. NOVO: Atualiza o preço do Bitcoin para a moeda do idioma
+    const currency = translations[lang]['currency'];
+    const locale = translations[lang]['locale'];
+    updateCryptoPrice(currency, locale);
+
+    localStorage.setItem('userLang', lang);
+}
+
+// Carregar idioma salvo ou padrão
+window.addEventListener('DOMContentLoaded', () => {
+    const saved = localStorage.getItem('userLang') || 'pt';
+    changeLanguage(saved);
+});
+</script>
+
+<script>
+    function updateDate() {
+    const dataElement = document.getElementById('current-date');
+    const hoje = new Date();
+    
+    // Formata a data para o padrão brasileiro (DD/MM/AAAA)
+    const dataFormatada = hoje.toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
+    
+    dataElement.innerText = dataFormatada;
+}
+
+// Chama a função assim que a página carregar
+updateDate();
+</script>
+    <script>
+(function() {
+    const canvas = document.getElementById('dot-canvas');
+    const ctx = canvas.getContext('2d');
+    const container = canvas.parentElement;
+
+    const dotConfig = {
+        dotSize: 2,
+        gap: 20,
+        baseColor: '#555555',
+        activeColor: '#F4EDE6',
+        proximity: 100 // Aumentamos um pouco para a transição ser mais visível
+    };
+
+    // Função para converter Hex para RGB para podermos calcular a mistura
+    function hexToRgb(hex) {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+        } : { r: 85, g: 85, b: 85 };
+    }
+
+    const baseRgb = hexToRgb(dotConfig.baseColor);
+    const activeRgb = hexToRgb(dotConfig.activeColor);
+
+    let dots = [];
+    let mouseLocal = { x: -1000, y: -1000 };
+
+    function init() {
+        canvas.width = container.offsetWidth;
+        canvas.height = container.offsetHeight;
+        dots = [];
+        for (let x = 0; x < canvas.width; x += dotConfig.gap) {
+            for (let y = 0; y < canvas.height; y += dotConfig.gap) {
+                dots.push({ x, y });
+            }
+        }
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        dots.forEach(dot => {
+            const dx = mouseLocal.x - dot.x;
+            const dy = mouseLocal.y - dot.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist < dotConfig.proximity) {
+                // Cálculo da suavidade (0 a 1)
+                const ratio = 1 - (dist / dotConfig.proximity);
+                
+                // Interpolação entre as duas cores
+                const r = Math.round(baseRgb.r + (activeRgb.r - baseRgb.r) * ratio);
+                const g = Math.round(baseRgb.g + (activeRgb.g - baseRgb.g) * ratio);
+                const b = Math.round(baseRgb.b + (activeRgb.b - baseRgb.b) * ratio);
+                
+                ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+            } else {
+                ctx.fillStyle = dotConfig.baseColor;
+            }
+
+            ctx.beginPath();
+            ctx.arc(dot.x, dot.y, dotConfig.dotSize, 0, Math.PI * 2);
+            ctx.fill();
+        });
+        requestAnimationFrame(draw);
+    }
+
+    window.addEventListener('mousemove', (e) => {
+        const rect = container.getBoundingClientRect();
+        mouseLocal.x = e.clientX - rect.left;
+        mouseLocal.y = e.clientY - rect.top;
+    });
+
+    window.addEventListener('resize', init);
+    init();
+    draw();
+        })();
+    </script>
+ <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+ <script>
+   async function updateCryptoPrice(currency = 'brl', locale = 'pt-BR') {
+    const priceElement = document.getElementById('btc-price');
+    
+    try {
+        const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=${currency}`);
+        
+        if (!response.ok) throw new Error('Limite da API atingido');
+
+        const data = await response.json();
+        const price = data.bitcoin[currency.toLowerCase()];
+        
+        if (price) {
+            const formattedPrice = price.toLocaleString(locale, { 
+                style: 'currency', 
+                currency: currency.toUpperCase() 
+            });
+            priceElement.innerText = formattedPrice;
+            // Salva o último preço com sucesso
+            localStorage.setItem('lastPrice', formattedPrice);
+        }
+    } catch (error) {
+        console.error('Erro na API:', error);
+        // Se falhar, tenta mostrar o último preço salvo para não ficar vazio
+        const lastSaved = localStorage.getItem('lastPrice');
+        priceElement.innerText = lastSaved || 'Indisponível';
+    }
+}
+
+// Inicializa e define o intervalo
+updateCryptoPrice();
+setInterval(updateCryptoPrice, 60000);
+ </script>
+    <script type="module">
+        import { Renderer, Camera, Geometry, Program, Mesh } from 'https://cdn.skypack.dev/ogl';
+
+        // Localize este bloco no seu código e substitua:
+const config = {
+    particleCount: 200,
+    particleSpread: 10,
+    speed: 0.1,
+    // Aqui está a cor que você pediu:
+    particleColors: ['#F4EDE6'], 
+    moveParticlesOnHover: true,
+    particleHoverFactor: 1,
+    alphaParticles: true,
+    particleBaseSize: 100,
+    sizeRandomness: 1,
+    cameraDistance: 20,
+    disableRotation: false,
+    pixelRatio: window.devicePixelRatio || 1
+};
+
+        const hexToRgb = hex => {
+            hex = hex.replace(/^#/, '');
+            if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+            const int = parseInt(hex, 16);
+            return [((int >> 16) & 255) / 255, ((int >> 8) & 255) / 255, (int & 255) / 255];
+        };
+
+        const vertex = /* glsl */ `
+            attribute vec3 position;
+            attribute vec4 random;
+            attribute vec3 color;
+            uniform mat4 modelMatrix;
+            uniform mat4 viewMatrix;
+            uniform mat4 projectionMatrix;
+            uniform float uTime;
+            uniform float uSpread;
+            uniform float uBaseSize;
+            uniform float uSizeRandomness;
+            varying vec4 vRandom;
+            varying vec3 vColor;
+            void main() {
+                vRandom = random;
+                vColor = color;
+                vec3 pos = position * uSpread;
+                pos.z *= 10.0;
+                vec4 mPos = modelMatrix * vec4(pos, 1.0);
+                float t = uTime;
+                mPos.x += sin(t * random.z + 6.28 * random.w) * mix(0.1, 1.5, random.x);
+                mPos.y += sin(t * random.y + 6.28 * random.x) * mix(0.1, 1.5, random.w);
+                mPos.z += sin(t * random.w + 6.28 * random.y) * mix(0.1, 1.5, random.z);
+                vec4 mvPos = viewMatrix * mPos;
+                gl_PointSize = (uBaseSize * (1.0 + uSizeRandomness * (random.x - 0.5))) / length(mvPos.xyz);
+                gl_Position = projectionMatrix * mvPos;
+            }
+        `;
+
+        const fragment = /* glsl */ `
+            precision highp float;
+            uniform float uTime;
+            uniform float uAlphaParticles;
+            varying vec4 vRandom;
+            varying vec3 vColor;
+            void main() {
+                vec2 uv = gl_PointCoord.xy;
+                float d = length(uv - vec2(0.5));
+                if(uAlphaParticles < 0.5) {
+                    if(d > 0.5) discard;
+                    gl_FragColor = vec4(vColor + 0.2 * sin(uv.yxx + uTime + vRandom.y * 6.28), 1.0);
+                } else {
+                    float circle = smoothstep(0.5, 0.4, d) * 0.8;
+                    gl_FragColor = vec4(vColor + 0.2 * sin(uv.yxx + uTime + vRandom.y * 6.28), circle);
+                }
+            }
+        `;
+
+        const container = document.getElementById('particles-container');
+        const mouse = { x: 0, y: 0 };
+        const renderer = new Renderer({ dpr: config.pixelRatio, depth: false, alpha: true });
+        const gl = renderer.gl;
+        container.appendChild(gl.canvas);
+        const camera = new Camera(gl, { fov: 15 });
+        camera.position.set(0, 0, config.cameraDistance);
+
+        function resize() {
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            camera.perspective({ aspect: gl.canvas.width / gl.canvas.height });
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Escuta o mouse no window para ambos os scripts funcionarem
+        window.addEventListener('mousemove', e => {
+            mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+        });
+
+        const count = config.particleCount;
+        const positions = new Float32Array(count * 3);
+        const randoms = new Float32Array(count * 4);
+        const colors = new Float32Array(count * 3);
+
+        for (let i = 0; i < count; i++) {
+            let x, y, z, len;
+            do {
+                x = Math.random() * 2 - 1; y = Math.random() * 2 - 1; z = Math.random() * 2 - 1;
+                len = x * x + y * y + z * z;
+            } while (len > 1 || len === 0);
+            const r = Math.cbrt(Math.random());
+            positions.set([x * r, y * r, z * r], i * 3);
+            randoms.set([Math.random(), Math.random(), Math.random(), Math.random()], i * 4);
+            const col = hexToRgb(config.particleColors[Math.floor(Math.random() * config.particleColors.length)]);
+            colors.set(col, i * 3);
+        }
+
+        const geometry = new Geometry(gl, {
+            position: { size: 3, data: positions },
+            random: { size: 4, data: randoms },
+            color: { size: 3, data: colors }
+        });
+
+        const program = new Program(gl, {
+            vertex, fragment,
+            uniforms: {
+                uTime: { value: 0 },
+                uSpread: { value: config.particleSpread },
+                uBaseSize: { value: config.particleBaseSize * config.pixelRatio },
+                uSizeRandomness: { value: config.sizeRandomness },
+                uAlphaParticles: { value: config.alphaParticles ? 1 : 0 }
+            },
+            transparent: true, depthTest: false
+        });
+
+        const particles = new Mesh(gl, { mode: gl.POINTS, geometry, program });
+        let lastTime = performance.now();
+        let elapsed = 0;
+
+        function update(t) {
+            requestAnimationFrame(update);
+            const delta = t - lastTime;
+            lastTime = t;
+            elapsed += delta * config.speed;
+            program.uniforms.uTime.value = elapsed * 0.001;
+            if (config.moveParticlesOnHover) {
+                particles.position.x = -mouse.x * config.particleHoverFactor;
+                particles.position.y = -mouse.y * config.particleHoverFactor;
+            }
+            if (!config.disableRotation) {
+                particles.rotation.x = Math.sin(elapsed * 0.0002) * 0.1;
+                particles.rotation.y = Math.cos(elapsed * 0.0005) * 0.15;
+                particles.rotation.z += 0.01 * config.speed;
+            }
+            renderer.render({ scene: particles, camera });
+        }
+        requestAnimationFrame(update);
+    </script>
+    <script>
+        var ctx, f, e = 0, pos = { x: 0, y: 0 }, lines = [], 
+        E = {
+            friction: 0.35,
+            trails: 20,
+            size: 4,
+            dampening: 0.15,
+            tension: 0.95,
+        };
+
+        function n(e) { this.init(e || {}); }
+        n.prototype = {
+            init: function (e) {
+                this.phase = e.phase || 0;
+                this.offset = e.offset || 0;
+                this.frequency = e.frequency || 0.001;
+                this.amplitude = e.amplitude || 1;
+            },
+            update: function () {
+                this.phase += this.frequency;
+                return this.offset + Math.sin(this.phase) * this.amplitude;
+            }
+        };
+
+        function Node() { this.x = 0; this.y = 0; this.vy = 0; this.vx = 0; }
+
+        function Line(e) { this.init(e || {}); }
+        Line.prototype = {
+            init: function (e) {
+                this.spring = e.spring + 0.1 * Math.random() - 0.02;
+                this.friction = E.friction + 0.01 * Math.random() - 0.002;
+                this.nodes = [];
+                for (var t, n = 0; n < E.size; n++) {
+                    t = new Node();
+                    t.x = pos.x; t.y = pos.y;
+                    this.nodes.push(t);
+                }
+            },
+            update: function () {
+                var e = this.spring, t = this.nodes[0];
+                t.vx += (pos.x - t.x) * e;
+                t.vy += (pos.y - t.y) * e;
+                for (var n, i = 0, a = this.nodes.length; i < a; i++) {
+                    t = this.nodes[i];
+                    if (0 < i) {
+                        n = this.nodes[i - 1];
+                        t.vx += (n.x - t.x) * e;
+                        t.vy += (n.y - t.y) * e;
+                        t.vx += n.vx * E.dampening;
+                        t.vy += n.vy * E.dampening;
+                    }
+                    t.vx *= this.friction; t.vy *= this.friction;
+                    t.x += t.vx; t.y += t.vy;
+                    e *= E.tension;
+                }
+            },
+            draw: function () {
+                var e, t, n = this.nodes[0].x, i = this.nodes[0].y;
+                ctx.beginPath();
+                ctx.moveTo(n, i);
+                for (var a = 1, o = this.nodes.length - 2; a < o; a++) {
+                    e = this.nodes[a]; t = this.nodes[a + 1];
+                    n = 0.5 * (e.x + t.x); i = 0.5 * (e.y + t.y);
+                    ctx.quadraticCurveTo(e.x, e.y, n, i);
+                }
+                e = this.nodes[a]; t = this.nodes[a + 1];
+                ctx.quadraticCurveTo(e.x, e.y, t.x, t.y);
+                ctx.stroke();
+                ctx.closePath();
+            }
+        };
+
+        function renderTrail() {
+            if (ctx.running) {
+                ctx.globalCompositeOperation = 'source-over';
+                ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                ctx.globalCompositeOperation = 'lighter';
+                ctx.strokeStyle = '#FFEEC8'; 
+                ctx.lineWidth = 1;
+                for (var i = 0; i < E.trails; i++) {
+                    lines[i].update();
+                    lines[i].draw();
+                }
+                window.requestAnimationFrame(renderTrail);
+            }
+        }
+
+        window.addEventListener('load', function() {
+            ctx = document.getElementById('canvas').getContext('2d');
+            ctx.running = true;
+            f = new n({ phase: Math.random() * 2 * Math.PI, amplitude: 85, frequency: 0.0015, offset: 285 });
+            
+            // Inicializa as linhas
+            for (var i = 0; i < E.trails; i++) {
+                lines.push(new Line({ spring: 0.4 + (i / E.trails) * 0.025 }));
+            }
+
+            window.addEventListener('mousemove', function(e) {
+                pos.x = e.clientX;
+                pos.y = e.clientY;
+            });
+
+            window.addEventListener('resize', function() {
+                ctx.canvas.width = window.innerWidth;
+                ctx.canvas.height = window.innerHeight;
+            });
+
+            ctx.canvas.width = window.innerWidth;
+            ctx.canvas.height = window.innerHeight;
+            renderTrail();
+        });
+    </script>
+
+    
+</body>
+</html>
