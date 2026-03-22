@@ -1,0 +1,223 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=League+Gothic&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Global body styling isolated to this page */
+body {
+    background-color:#000;
+    overflow-x: hidden;
+}
+
+.container{
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+
+.menu{
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 80px;
+    display: flex;
+    justify-content: space-between;
+    z-index: 4;
+}
+
+.logo{
+    width: 200px;
+    height: 100px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-left: 70px;
+    z-index: 4;
+}
+
+.logo a{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    text-decoration: none;
+}
+
+
+.logo img{
+    width: 120px;
+    height: 120px;
+    margin-top: 10px;
+    margin-left: 30px;
+}
+
+.logo h1{
+    color: #F4EDE6;
+    font-weight: 400;
+    font-family: 'Cinzel', serif;
+    font-size: 35px;
+}
+
+.logo p{
+    color: #F4EDE6;
+    margin-left: 15px;
+    text-transform: uppercase;
+    font-size: 30px;
+    font-family: "Cinzel", serif;
+}
+
+.infos{
+    width: 50%;
+    margin-right: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+}
+
+.lista{
+    color: #F4EDE6;
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+    gap: 40px;
+    margin-right: 30px;
+    margin-top: 10px;
+}
+
+
+.lista li{
+font-family: 'Montserrat', sans-serif;
+    font-size: 15px;
+    text-transform: uppercase;
+    position: relative;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.lista li a{
+    text-decoration: none;
+    color: #F4EDE6;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 15px;
+    text-transform: uppercase;
+    position: relative;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.lista li::after{
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background-color: #F4EDE6;
+    transition: width 0.5s ease;
+}
+
+.lista li:hover::after{
+    width: 100%;
+}
+
+.language {
+    position: absolute;
+    top: 100%;
+    left: 30%;
+    transform: translateX(-50%);
+    background-color: rgba(88, 86, 86, 0.447);
+    backdrop-filter: blur(10px); 
+    padding: 15px;
+    border-radius: 10px;
+    min-width: 100px;
+    z-index: 4;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0.4s, transform 0.4s ease;
+    border: 1px solid rgba(158, 157, 157, 0.741);
+}
+
+/* QUANDO ESTIVER NO HOVER (Aparecer) */
+.linguas:hover .language {
+    display: block; 
+    opacity: 1;
+    visibility: visible;
+    animation: topToFall 0.5s ease-out forwards;
+}
+
+.linguas .language {
+    animation: fallToTop 0.4s ease-in forwards;
+}
+
+.language p{
+    transition: color 0.5s ease;
+    position: relative;
+}
+
+.language p:hover {
+    color: #e6e7e49c; 
+}
+
+.secao1 {
+    position: relative;
+    width: 100%;
+    height: 500px; /* Defina uma altura fixa para evitar sobreposição na secao2 */
+    margin-bottom: 316px; /* Reduzi o margin para não empurrar demais a secao2 */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    background-color: black;
+}
+
+.secao1 h1 {
+    margin-left: 50px;
+    font-size: 5rem;
+    font-family: "Inter", sans-serif;
+    color: #F4EDE6;
+    text-shadow: 0 0 15px rgba(244, 237, 230, 0.8); /* Seu efeito de brilho */
+    z-index: 2;
+}
+
+.secao1 h1{
+    margin-left: 50px;
+    margin-top: 20%;
+    width: 100%;
+    height: 150px;
+    font-weight: 500;
+    font-family: "Inter";
+    letter-spacing: 4px;
+    position: relative;
+text-shadow: 0 0 10px rgba(244, 237, 230, 0.7);
+}
+
+.secao1::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    filter: blur(1px);
+    background: linear-gradient(90deg, transparent, #F4EDE6 50%, transparent);
+    box-shadow: 0 0 18px rgba(244, 237, 230, 0.8);
+    animation: toLeft 1s forwards;
+    z-index: 2;
+}
+
+
+@keyframes toLeft{
+    from{
+        width: 0%;
+    }
+    to{
+        width: 100%;
+    }
+}
