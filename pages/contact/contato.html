@@ -65,9 +65,17 @@
         <div id="scroll-section" style="height: 400vh; position: relative;">
         <section class="secao1" style="position: sticky; top: 0; height: 100vh; overflow: hidden; margin: 0;">
 <video muted playsinline class="video-bg" id="scroll-video">
-        <source src="../../images/sla_web.mp4" type="video/mp4">
+        <source id="scroll-video-src" src="" type="video/mp4">
         Seu navegador não suporta vídeos.
     </video>
+    <script>
+      (function() {
+        var isMobile = window.innerWidth <= 768;
+        var src = isMobile ? '../../images/sla_mobile.mp4' : '../../images/sla_web.mp4';
+        document.getElementById('scroll-video-src').src = src;
+        document.getElementById('scroll-video').load();
+      })();
+    </script>
 
     <div class="overlay"></div>
 
@@ -117,7 +125,14 @@
         </section>
 
         <footer>
-            <video src="../../images/sla_web.mp4" autoplay muted loop playsinline></video>
+            <video id="footer-video" autoplay muted loop playsinline></video>
+            <script>
+              (function() {
+                var isMobile = window.innerWidth <= 768;
+                var src = isMobile ? '../../images/sla_mobile.mp4' : '../../images/sla_web.mp4';
+                document.getElementById('footer-video').src = src;
+              })();
+            </script>
             <p>© Copyright 2025
                 BIAR All rights reserved.</p>
 
