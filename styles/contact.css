@@ -29,10 +29,7 @@ html {
     /* Dica: use uma borda transparente para criar um "respiro" */
     border: 2px solid rgba(0, 0, 0, 0); 
     background-clip: padding-box;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background-color: #F4EDE6; /* Cor de destaque ao passar o mouse */
+    cursor: pointer;
 }
 
 /* Global body styling isolated to this page */
@@ -70,6 +67,7 @@ body {
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: center;
     margin-left: 70px;
     z-index: 4;
 }
@@ -163,8 +161,8 @@ font-family: 'Montserrat', sans-serif;
     top: 100%;
     left: 30%;
     transform: translateX(-50%);
-    background-color: rgba(88, 86, 86, 0.447);
-    backdrop-filter: blur(10px); 
+    background-color: rgba(30, 30, 30, 0.8);
+    backdrop-filter: blur(8px); 
     padding: 15px;
     border-radius: 10px;
     min-width: 100px;
@@ -172,7 +170,14 @@ font-family: 'Montserrat', sans-serif;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.4s ease, visibility 0.4s, transform 0.4s ease;
-    border: 1px solid rgba(158, 157, 157, 0.741);
+    border: 1px solid rgba(158, 157, 157, 0.3);
+}
+
+@media (max-width: 768px) {
+    .language {
+        backdrop-filter: none;
+        background-color: rgba(20, 20, 20, 0.95);
+    }
 }
 
 /* QUANDO ESTIVER NO HOVER (Aparecer) */
@@ -199,8 +204,7 @@ font-family: 'Montserrat', sans-serif;
 .secao1 {
     position: relative;
     width: 100%;
-    height: 500px; /* Defina uma altura fixa para evitar sobreposição na secao2 */
-    margin-bottom: 316px; /* Reduzi o margin para não empurrar demais a secao2 */
+    height: 100vh; 
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -208,16 +212,16 @@ font-family: 'Montserrat', sans-serif;
     background-color: black;
 }
 
-.secao1 .video-bg {
+.secao1 video {
     position: absolute;
-    top: 50%;
     left: 50%;
+    top: 50%;
     transform: translate(-50%, -50%);
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
     min-width: 100%;
     min-height: 100%;
-    object-fit: cover;
-    z-index: 1; /* Camada base */
-    opacity: 1; /* Deixe em 1, pois a overlay controlará a visibilidade */
 }
 
 .overlay {
@@ -229,13 +233,9 @@ font-family: 'Montserrat', sans-serif;
     z-index: 2; /* Fica entre o vídeo e o texto */
     background: rgba(0, 0, 0, 0.514); 
     pointer-events: none; 
+    z-index: 1;
 }
 
-.secao1 .content {
-    position: relative;
-    z-index: 3; /* Texto fica acima de tudo */
-    pointer-events: none; /* Deixa o mouse "atravessar" para a section ler a posição */
-}
 
 .secao1 h1 {
     margin-left: 50px;
@@ -248,26 +248,24 @@ font-family: 'Montserrat', sans-serif;
 
 .secao1 h1{
     margin-left: 50px;
-    margin-top: 20%;
     width: 100%;
     height: 150px;
     font-weight: 500;
-    font-family: "Inter";
+    font-family: "Inter", sans-serif;
+    font-size: 5rem;
+    color: #F4EDE6;
     letter-spacing: 4px;
     position: relative;
-text-shadow: 0 0 10px rgba(244, 237, 230, 0.7);
+    top: 20%;
+text-shadow: 0 0 10px rgba(244, 237, 230, 0.8);
 }
 
-.secao1 p{
-    width: 100%;
-    position: absolute;
-    height: 40px;
-}
 
-.secao1::after {
+
+.secao1 video::after {
     content: "";
     position: absolute;
-    bottom: 0;
+    bottom: 10%;
     left: 0;
     height: 3px;
     filter: blur(1px);
@@ -295,8 +293,7 @@ text-shadow: 0 0 10px rgba(244, 237, 230, 0.7);
     padding: 40px;           
     background-color: #000; 
     box-sizing: border-box;
-    position: absolute;
-    margin-top: 20%;
+    position: relative;
     z-index: 1;
 }
 
@@ -345,7 +342,7 @@ text-shadow: 0 0 10px rgba(244, 237, 230, 0.7);
       --glow-radius: 200px;
       position: relative;
       overflow: hidden;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
     }
 
     .magic-bento-card::after {
@@ -403,8 +400,8 @@ text-shadow: 0 0 10px rgba(244, 237, 230, 0.7);
       width: 4px;
       height: 4px;
       border-radius: 50%;
-      background: rgb(185, 181, 194);
-      box-shadow: 0 0 6px rgba(164, 160, 167, 0.7);
+      background: #b9b5c2;
+      box-shadow: 0 0 6px #a4a0a7b3;
       pointer-events: none;
       z-index: 100;
     }
@@ -562,10 +559,18 @@ footer::after{
         transform: translateX(-50%);
     }
 
+    .secao1 video {
+        height: 100vh;
+        width: auto;
+        min-width: 100%;
+    }
+
     .secao1 h1 {
         font-size: 3rem;
         margin-left: 20px;
-        margin-top: 30%;
+        position: relative;
+        top: 0;
+        margin-top: 0;
     }
 
     .logo h1 {
@@ -582,7 +587,7 @@ footer::after{
 @media screen and (max-width: 700px){
     .secao2 {
         padding: 20px;
-        margin-top: 50%;
+        margin-top: 0;
     }
     .secao2 .left, .secao2 .right, .secao2 .down {
         min-width: 100%;
