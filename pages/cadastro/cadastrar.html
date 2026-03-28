@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../styles/cadastro.css">
+    <title>Light Pillar Effect - Vanilla JS</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        .light-pillar-container {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            mix-blend-mode: screen;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="light-pillar" class="light-pillar-container"></div>
+
+    <a href="../../index.html">
+        <p class="home"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
+</svg> Home</p>
+    </a>
+
+    <div class="container">
+        <div class="title">
+            <img src="../../images/logo_biar2.png" alt="">
+            <h2>Create new account</h2>
+        </div>
+        <div class="input">
+            <p>Username</p>
+            <input type="text" required placeholder="@seu_usuario">
+            <p style="margin-top: 5px;">Email</p>
+            <input type="text" required placeholder="name@work-email.com">
+            <p style="margin-top: 5px;">Senha</p>
+            <input type="text" required placeholder="Abc1234@">
+            <button class="galaxy-btn">
+  <span class="galaxy-btn__content">
+    <span class="galaxy-btn__text">CREATE ACCOUNT</span>
+      <path fill="none" d="M0 0h24v24H0z"></path>
+      <path
+        d="M13 14h-2a8.999 8.999 0 0 0-7.968 4.81A10.136 10.136 0 0 1 3 18C3 12.477 7.477 8 13 8V3l10 8-10 8v-5z"
+        fill="currentColor"
+      ></path>
+    </svg>
+  </span>
+  <span class="galaxy-btn__glow"></span>
+  <span class="galaxy-btn__stars"></span>
+
+</button>
+ <span class="or">OR</span>
+        </div>
+        <div class="buttons">
+            <button><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-google" viewBox="0 0 16 16">
+  <path d="M15.545 6.558a9.4 9.4 0 0 1 .139 1.626c0 2.434-.87 4.492-2.384 5.885h.002C11.978 15.292 10.158 16 8 16A8 8 0 1 1 8 0a7.7 7.7 0 0 1 5.352 2.082l-2.284 2.284A4.35 4.35 0 0 0 8 3.166c-2.087 0-3.86 1.408-4.492 3.304a4.8 4.8 0 0 0 0 3.063h.003c.635 1.893 2.405 3.301 4.492 3.301 1.078 0 2.004-.276 2.722-.764h-.003a3.7 3.7 0 0 0 1.599-2.431H8v-3.08z"/>
+</svg> Sign up with Google</button>
+        </div>
+    </div>
+    <div class="signup1">
+        <p class="signup">Already have an account?</p> <a href="../login/login.html">Sign in</a>
+    </div>
+
+    <p class="terms">Terms of Use | Privacy policy</p>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+
+        class LightPillarEffect {
+            constructor(containerId, options = {}) {
+                this.container = document.getElementById(containerId);
+                if (!this.container) return;
+
+                this.config = {
+                    topColor: options.topColor || '#5227FF',
+                    bottomColor: options.bottomColor || '#FF9FFC',
+                    intensity: options.intensity !== undefined ? options.intensity : 1.0,
+                    rotationSpeed: options.rotationSpeed !== undefined ? options.rotationSpeed : 0.3,
+                    interactive: options.interactive !== undefined ? options.interactive : true,
+                    glowAmount: options.glowAmount !== undefined ? options.glowAmount : 0.005,
+                    pillarWidth: options.pillarWidth !== undefined ? options.pillarWidth : 3.0,
+                    pillarHeight: options.pillarHeight !== undefined ? options.pillarHeight : 0.4,
+                    noiseIntensity: options.noiseIntensity !== undefined ? options.noiseIntensity : 0.5,
+                    pillarRotation: options.pillarRotation !== undefined ? options.pillarRotation : 0,
+                    quality: options.quality || 'high'
+                };
+
+                this.time = 0;
+                this.mouse = new THREE.Vector2(0, 0);
+                this.lastTime = performance.now();
+                this.raf = null;
+
+                this.init();
+            }
+
+            init() {
+                const width = this.container.clientWidth;
+                const height = this.container.clientHeight;
+
+                this.scene = new THREE.Scene();
+                this.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                const isLowEndDevice = isMobile || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
+
+                let effectiveQuality = this.config.quality;
+                if (isLowEndDevice && this.config.quality === 'high') effectiveQuality = 'medium';
+                if (isMobile && this.config.quality !== 'low') effectiveQuality = 'low';
+
+                const qualitySettings = {
+                    low: { iterations: 24, waveIterations: 1, pixelRatio: 0.5, precision: 'mediump', stepMultiplier: 1.5 },
+                    medium: { iterations: 40, waveIterations: 2, pixelRatio: 0.65, precision: 'mediump', stepMultiplier: 1.2 },
+                    high: {
+                        iterations: 80,
+                        waveIterations: 4,
+                        pixelRatio: Math.min(window.devicePixelRatio, 2),
+                        precision: 'highp',
+                        stepMultiplier: 1.0
+                    }
+                };
+
+                const settings = qualitySettings[effectiveQuality] || qualitySettings.medium;
+
+                try {
+                    this.renderer = new THREE.WebGLRenderer({
+                        antialias: false,
+                        alpha: true,
+                        powerPreference: effectiveQuality === 'high' ? 'high-performance' : 'low-power',
+                        precision: settings.precision,
+                        stencil: false,
+                        depth: false
+                    });
+                } catch (error) {
+                    console.error('WebGL not supported');
+                    return;
+                }
+
+                this.renderer.setSize(width, height);
+                this.renderer.setPixelRatio(settings.pixelRatio);
+                this.container.appendChild(this.renderer.domElement);
+
+                const parseColor = hex => {
+                    const color = new THREE.Color(hex);
+                    return new THREE.Vector3(color.r, color.g, color.b);
+                };
+
+                const vertexShader = `
+                    varying vec2 vUv;
+                    void main() {
+                        vUv = uv;
+                        gl_Position = vec4(position, 1.0);
+                    }
+                `;
+
+                const fragmentShader = `
+                    precision ${settings.precision} float;
+
+                    uniform float uTime;
+                    uniform vec2 uResolution;
+                    uniform vec2 uMouse;
+                    uniform vec3 uTopColor;
+                    uniform vec3 uBottomColor;
+                    uniform float uIntensity;
+                    uniform bool uInteractive;
+                    uniform float uGlowAmount;
+                    uniform float uPillarWidth;
+                    uniform float uPillarHeight;
+                    uniform float uNoiseIntensity;
+                    uniform float uRotCos;
+                    uniform float uRotSin;
+                    uniform float uPillarRotCos;
+                    uniform float uPillarRotSin;
+                    uniform float uWaveSin;
+                    uniform float uWaveCos;
+                    varying vec2 vUv;
+
+                    const float STEP_MULT = ${settings.stepMultiplier.toFixed(1)};
+                    const int MAX_ITER = ${settings.iterations};
+                    const int WAVE_ITER = ${settings.waveIterations};
+
+                    void main() {
+                        vec2 uv = (vUv * 2.0 - 1.0) * vec2(uResolution.x / uResolution.y, 1.0);
+                        uv = vec2(uPillarRotCos * uv.x - uPillarRotSin * uv.y, uPillarRotSin * uv.x + uPillarRotCos * uv.y);
+
+                        vec3 ro = vec3(0.0, 0.0, -10.0);
+                        vec3 rd = normalize(vec3(uv, 1.0));
+
+                        float rotC = uRotCos;
+                        float rotS = uRotSin;
+                        if(uInteractive && (uMouse.x != 0.0 || uMouse.y != 0.0)) {
+                            float a = uMouse.x * 6.283185;
+                            rotC = cos(a);
+                            rotS = sin(a);
+                        }
+
+                        vec3 col = vec3(0.0);
+                        float t = 0.1;
+
+                        for(int i = 0; i < MAX_ITER; i++) {
+                            vec3 p = ro + rd * t;
+                            p.xz = vec2(rotC * p.x - rotS * p.z, rotS * p.x + rotC * p.z);
+
+                            vec3 q = p;
+                            q.y = p.y * uPillarHeight + uTime;
+
+                            float freq = 1.0;
+                            float amp = 1.0;
+                            for(int j = 0; j < WAVE_ITER; j++) {
+                                q.xz = vec2(uWaveCos * q.x - uWaveSin * q.z, uWaveSin * q.x + uWaveCos * q.z);
+                                q += cos(q.zxy * freq - uTime * float(j) * 2.0) * amp;
+                                freq *= 2.0;
+                                amp *= 0.5;
+                            }
+
+                            float d = length(cos(q.xz)) - 0.2;
+                            float bound = length(p.xz) - uPillarWidth;
+                            float k = 4.0;
+                            float h = max(k - abs(d - bound), 0.0);
+                            d = max(d, bound) + h * h * 0.0625 / k;
+                            d = abs(d) * 0.15 + 0.01;
+
+                            float grad = clamp((15.0 - p.y) / 30.0, 0.0, 1.0);
+                            col += mix(uBottomColor, uTopColor, grad) / d;
+
+                            t += d * STEP_MULT;
+                            if(t > 50.0) break;
+                        }
+
+                        float widthNorm = uPillarWidth / 3.0;
+                        col = tanh(col * uGlowAmount / widthNorm);
+
+                        col -= fract(sin(dot(gl_FragCoord.xy, vec2(12.9898, 78.233))) * 43758.5453) / 15.0 * uNoiseIntensity;
+
+                        gl_FragColor = vec4(col * uIntensity, 1.0);
+                    }
+                `;
+
+                const pillarRotRad = (this.config.pillarRotation * Math.PI) / 180;
+                const waveSin = Math.sin(0.4);
+                const waveCos = Math.cos(0.4);
+
+                this.material = new THREE.ShaderMaterial({
+                    vertexShader,
+                    fragmentShader,
+                    uniforms: {
+                        uTime: { value: 0 },
+                        uResolution: { value: new THREE.Vector2(width, height) },
+                        uMouse: { value: this.mouse },
+                        uTopColor: { value: parseColor(this.config.topColor) },
+                        uBottomColor: { value: parseColor(this.config.bottomColor) },
+                        uIntensity: { value: this.config.intensity },
+                        uInteractive: { value: this.config.interactive },
+                        uGlowAmount: { value: this.config.glowAmount },
+                        uPillarWidth: { value: this.config.pillarWidth },
+                        uPillarHeight: { value: this.config.pillarHeight },
+                        uNoiseIntensity: { value: this.config.noiseIntensity },
+                        uRotCos: { value: 1.0 },
+                        uRotSin: { value: 0.0 },
+                        uPillarRotCos: { value: Math.cos(pillarRotRad) },
+                        uPillarRotSin: { value: Math.sin(pillarRotRad) },
+                        uWaveSin: { value: waveSin },
+                        uWaveCos: { value: waveCos }
+                    },
+                    transparent: true,
+                    depthWrite: false,
+                    depthTest: false
+                });
+
+                const geometry = new THREE.PlaneGeometry(2, 2);
+                const mesh = new THREE.Mesh(geometry, this.material);
+                this.scene.add(mesh);
+
+                this.setupEventListeners();
+                this.animate();
+            }
+
+            setupEventListeners() {
+                if (this.config.interactive) {
+                    window.addEventListener('mousemove', (event) => {
+                        const rect = this.container.getBoundingClientRect();
+                        const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+                        const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+                        this.mouse.set(x, y);
+                    }, { passive: true });
+                }
+
+                window.addEventListener('resize', () => {
+                    const newWidth = this.container.clientWidth;
+                    const newHeight = this.container.clientHeight;
+                    this.renderer.setSize(newWidth, newHeight);
+                    this.material.uniforms.uResolution.value.set(newWidth, newHeight);
+                }, { passive: true });
+            }
+
+            animate(currentTime = performance.now()) {
+                this.raf = requestAnimationFrame((time) => this.animate(time));
+
+                const deltaTime = currentTime - this.lastTime;
+                const targetFPS = this.config.quality === 'low' ? 30 : 60;
+                const frameTime = 1000 / targetFPS;
+
+                if (deltaTime >= frameTime) {
+                    this.time += 0.016 * this.config.rotationSpeed;
+                    this.material.uniforms.uTime.value = this.time;
+                    this.material.uniforms.uRotCos.value = Math.cos(this.time * 0.3);
+                    this.material.uniforms.uRotSin.value = Math.sin(this.time * 0.3);
+                    this.renderer.render(this.scene, this.camera);
+                    this.lastTime = currentTime - (deltaTime % frameTime);
+                }
+            }
+
+            updateConfig(newConfig) {
+                Object.assign(this.config, newConfig);
+                if (newConfig.topColor) {
+                    this.material.uniforms.uTopColor.value = new THREE.Color(newConfig.topColor);
+                }
+                if (newConfig.bottomColor) {
+                    this.material.uniforms.uBottomColor.value = new THREE.Color(newConfig.bottomColor);
+                }
+                // Update other uniforms as needed...
+            }
+        }
+
+        // Initialize the effect
+        window.addEventListener('DOMContentLoaded', () => {
+            const effect = new LightPillarEffect('light-pillar', {
+                topColor: '#5227FF',
+                bottomColor: '#FF9FFC',
+                intensity: 0.8,
+                rotationSpeed: 0.4,
+                interactive: false,
+                pillarRotation: 45,
+                pillarWidth: 3.1,
+                pillarHeight: 0.45
+            });
+        });
+    </script>
+<script src="../../global-audio.js"></script>
+</body>
+</html>
