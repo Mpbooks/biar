@@ -1,0 +1,356 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+body{
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+
+.container{
+    width:500px;
+    height: 550px;
+    background: rgb(11 13 16/ 0.95);
+    position: relative;
+    z-index: 10;
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(124, 58, 237, 0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.container .title{
+    width: 90%;
+    color: #F4EDE6;
+    position: absolute;
+    top: 5%;
+}
+
+.title h2{
+    font-size: 2rem;
+    margin-left: 20px;
+}
+
+.title img{
+    width: 100px;
+    height: 100px;
+}
+
+.input{
+    width: 90%;
+    color: #8c8c8c;
+    height: 240px;
+    position: absolute;
+    top: 35%;
+}
+
+.input p{
+    font-size: 18px;
+    margin-left: 20px;
+}
+
+.input input{
+    margin-left: 20px;
+    width: 90%;
+    height: 40px;
+    padding: 10px;
+    border-radius: 0 0 5px 0;
+    background-color: transparent;
+    border: 0.5px solid #4a4a4a;
+    margin-top: 10px;
+    color: #F4EDE6;
+}
+
+
+
+/* From Uiverse.io by zaby_4213 */ 
+.galaxy-btn {
+  /* Scoped Variables */
+  --btn-bg: #161621;
+  --btn-text: #ffffff;
+  --btn-primary: #8553f4; /* Purple */
+  --btn-secondary: #3b82f6; /* Blue */
+  --btn-accent: #f43f5e; /* Pink */
+  --btn-font-size: 16px; /* Base size */
+
+  /* Layout & Sizing */
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  font-size: var(--btn-font-size);
+  padding: 0.9em 2em;
+  border-radius: 0.75em;
+  border: none;
+  background: var(--btn-bg);
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  z-index: 1;
+  transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  /* Shadow */
+  box-shadow: 0 0.5em 1.5em -0.5em rgba(133, 83, 244, 0.4);
+  width: 90%;
+  margin-top: 20px;
+  margin-left: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+/* Accessible Focus State */
+.galaxy-btn:focus-visible {
+  outline: 2px solid var(--btn-primary);
+  outline-offset: 4px;
+}
+
+/* Active Click State */
+.galaxy-btn:active {
+  transform: scale(0.96);
+}
+
+/* --- Interior Content --- */
+.galaxy-btn__content {
+  display: flex;
+  align-items: center;
+  gap: 0.75em;
+  position: relative;
+  z-index: 2;
+  color: var(--btn-text);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* SVG Icon Styling */
+.galaxy-btn__icon {
+  width: 1.25em;
+  height: 1.25em;
+  transition: transform 0.3s ease;
+  fill: var(--btn-text);
+}
+
+/* Hover: Move Icon */
+.galaxy-btn:hover .galaxy-btn__icon {
+  transform: translateX(0.25em) rotate(-10deg);
+}
+
+/* --- The Rotating Gradient Border (The Nebula) --- */
+.galaxy-btn::before {
+  content: "";
+  position: absolute;
+  inset: -4px; /* Border width */
+  z-index: 0;
+  background: conic-gradient(
+    from 0deg,
+    var(--btn-bg) 0deg,
+    var(--btn-primary) 60deg,
+    var(--btn-secondary) 120deg,
+    var(--btn-bg) 180deg,
+    var(--btn-accent) 240deg,
+    var(--btn-primary) 300deg,
+    var(--btn-bg) 360deg
+  );
+  border-radius: 0.75em;
+  animation: rotate-nebula 4s linear infinite;
+  filter: blur(8px); /* Soften for glow effect */
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.galaxy-btn:hover::before {
+  opacity: 1;
+  animation-duration: 2s; /* Speed up on hover */
+}
+
+/* Mask to create the inner dark area (Simulates border) */
+.galaxy-btn::after {
+  content: "";
+  position: absolute;
+  inset: 2px; /* Inner spacing */
+  background: var(--btn-bg);
+  border-radius: 0.6em; /* Slightly smaller radius */
+  z-index: 1;
+}
+
+/* --- Internal Star Animation --- */
+.galaxy-btn__stars {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image: radial-gradient(
+      circle at 20% 30%,
+      white 1px,
+      transparent 1.5px
+    ),
+    radial-gradient(circle at 80% 70%, white 1px, transparent 1.5px),
+    radial-gradient(circle at 40% 80%, white 0.5px, transparent 1px);
+  background-size: 120% 120%;
+  opacity: 0.3;
+  transition:
+    opacity 0.3s ease,
+    background-position 0.3s ease;
+}
+
+.galaxy-btn:hover .galaxy-btn__stars {
+  opacity: 0.8;
+  animation: star-drift 5s linear infinite alternate;
+}
+
+/* --- Keyframes --- */
+@keyframes rotate-nebula {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes star-drift {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.1) translate(-2%, -2%);
+  }
+}
+
+
+.input::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -10px;
+    width: 42%;
+    height: 1px; /* Espessura da linha */
+    background-color: #686868;
+    margin-left: 20px;
+}
+
+.or{
+    position: absolute;
+    bottom: -10px;
+    color: #8c8c8c;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 0px;
+    margin-left: 2px;
+    font-weight: 400;
+}
+
+.input::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -10px;
+    width: 42%;
+    height: 1px; /* Espessura da linha */
+    background-color: #686868;
+    margin-left: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.buttons{
+    position: absolute;
+    bottom: 4%;
+    width: 100%;
+    height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.buttons button{
+    width: 180px;
+    height: 50px;
+    background-color: transparent;
+    color: #F4EDE6;
+    border: 1px solid #8c8c8c;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    border-radius: 5px;
+}
+
+.buttons button svg{
+    margin-right: 7px;
+}
+
+.signup1{
+    color: #9a9898;
+    width: 40%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    margin-top: 20px;gap: 6px;
+}
+
+.signup1 a{
+    color: #F4EDE6;
+    text-decoration: none;
+    z-index: 2;
+    cursor: pointer;
+}
+
+.terms{
+    position: absolute;
+    bottom: 1%;
+    color: #9a9898;
+    font-size: 16px;
+}
+
+.home{
+    color: #F4EDE6;
+    position: absolute;
+    left: 5%;
+    top: 5%;
+    display: flex;
+    justify-content: center;
+    gap: 3px;
+    cursor: pointer;
+}
+
+.home svg{
+    transition: transform 0.6s ease;
+}
+
+.home:hover svg{
+    transform: translateX(-5px);
+}
+
+@media screen and (max-width: 600px){
+    .container{
+        width: 85%;
+    }
+
+    .signup1{
+        width: 90%;
+    }
+
+    .home{
+        top: 2%;
+        font-size: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
