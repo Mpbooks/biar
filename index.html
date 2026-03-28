@@ -4,11 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./styles/styles.css">
+    <link rel="icon" type="image/png" href="./images/logo_biar2.png">
     <title>BIAR Invest</title>
-    
+    <style>
+
+    </style>
 </head>
 <body>
-    <div id="particles-container"></div>
     <div id="particles-container"></div>
     <canvas id="canvas"></canvas>
 
@@ -17,12 +19,13 @@
         <div class="video-background">
     <div class="overlay"></div>
     <video autoplay muted loop playsinline id="bg-video">
-        <source src="./images/7385122-uhd_3840_2160_30fps.mp4" type="video/mp4">
+        <source src="./images/modelo.mp4" type="video/mp4">
     </video>
 </div>
        <div class="menu">
         <div class="logo">
            <a href="index.html">
+            <img src="./images/logo_biar2.png" alt="">
              <h1>BIAR</h1>
             <p>Invest</p></a>
         </div>
@@ -34,8 +37,8 @@
         <div class="infos">
             <ul class="lista">
                 <li><a href="./pages/about/about.html" data-i18n="menu_about">Sobre</a></li>
-<li><a href="index.html" data-i18n="menu_sust">Sustentabilidade</a></li>
-<li><a href="index.html" data-i18n="menu_invest">Investidores</a></li>
+<li><a href="./pages/login/login.html" data-i18n="menu_sust">Login</a></li>
+                    <li><a href="./pages/cadastro/cadastrar.html" data-i18n="menu_invest">Cadastrar</a></li>
 <li><a href="./pages/contact/contato.html" data-i18n="menu_contact">Contato</a></li>
                 <li class="linguas">PT
                     <div class="language">
@@ -64,15 +67,17 @@
         <p id="current-date">Carregando data...</p>
 </div>
 </div>
+
     </div>
+
 
 
 <script>
   const translations = {
     'pt': {
         'menu_about': 'Sobre',
-        'menu_sust': 'Sustentabilidade',
-        'menu_invest': 'Investidores',
+        'menu_sust': 'Login',
+        'menu_invest': 'Cadastrar',
         'menu_contact': 'Contato',
         'title': 'Biar Invest',
         'subtitle': 'O seu dinheiro fluirá como um rio',
@@ -83,8 +88,8 @@
     },
     'en': {
         'menu_about': 'About',
-        'menu_sust': 'Sustainability',
-        'menu_invest': 'Investors',
+        'menu_sust': 'Login',
+        'menu_invest': 'Cadastrar',
         'menu_contact': 'Contact',
         'title': 'Biar Invest',
         'subtitle': 'Your money will flow like a river',
@@ -95,8 +100,8 @@
     },
     'es': {
         'menu_about': 'Sobre',
-        'menu_sust': 'Sostenibilidad',
-        'menu_invest': 'Inversores',
+        'menu_sust': 'Login',
+        'menu_invest': 'Cadastrar',
         'menu_contact': 'Contacto',
         'title': 'Biar Invest',
         'subtitle': 'Tu dinero fluirá como un río',
@@ -288,7 +293,7 @@ const config = {
     speed: 0.1,
     // Aqui está a cor que você pediu:
     particleColors: ['#F4EDE6'], 
-    moveParticlesOnHover: true,
+    moveParticlesOnHover: false,
     particleHoverFactor: 1,
     alphaParticles: true,
     particleBaseSize: 100,
@@ -435,6 +440,7 @@ const config = {
     </script>
 
 <script src="mouse.js"></script>
+<script src="global-audio.js"></script>
     
 </body>
 </html>
